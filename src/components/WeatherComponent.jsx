@@ -36,25 +36,25 @@ const WeatherComponent = () => {
   };
 
   return (
-    <div>
-      <input
+    <div className='container mx-auto card p-5 bg-orange-300 rounded-2xl w-fit text-center'>
+      <p className='mb-3'>Please enter your location below</p>
+      <input className='p-2 rounded-md'
         type="text"
         value={location}
         onChange={handleInputChange}
         placeholder="Enter location"
       />
-      <button onClick={handleButtonClick}>Get Weather</button>
-      
+      <button className='bg-blue-400 rounded-md p-2 my-3 block w-full' onClick={handleButtonClick}>Get Weather</button>
+
       {error && <p>Error: {error.message}</p>}
       {weatherData ? (
-        <div>
-          <h1>Weather Data</h1>
+        <div >
           <p>Location: {weatherData.location.name}</p>
           <p>Temperature: {weatherData.current.temp_c}°C</p>
           <p>Condition: {weatherData.current.condition.text}</p>
         </div>
       ) : (
-        <p>Enter a location and click 'Get Weather' to see the current weather.</p>
+        <p className='mt-5'>Enter a location and click 'Get Weather' to see the current weather.</p>
       )}
     </div>
   );

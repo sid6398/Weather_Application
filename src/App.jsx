@@ -3,7 +3,7 @@ import WeatherComponent from './components/WeatherComponent'
 
 const App = () => {
   return (
-    <div>
+    <div className='grid h-screen place-items-center'>
       <WeatherComponent/>
     </div>
   )
