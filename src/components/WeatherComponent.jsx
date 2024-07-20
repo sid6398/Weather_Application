@@ -1,60 +1,82 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 const WeatherComponent = () => {
-  const [weatherData, setWeatherData] = useState(null);
-  const [error, setError] = useState(null);
-  const [location, setLocation] = useState('');
+  const [weatherdata, setWeatherData] = useState(false);
 
-  const fetchWeatherData = async () => {
-    const options = {
-      method: 'GET',
-      url: 'https://weatherapi-com.p.rapidapi.com/current.json',
-      params: { q: location },
-      headers: {
-        'x-rapidapi-key': '94600af06emsh29b6c6feba5c10dp10fac4jsne3639eabd1d0',
-        'x-rapidapi-host': 'weatherapi-com.p.rapidapi.com',
-      },
-    };
+  const inputref = useRef();
 
+  const search = async (city) => {
+    if(city === ""){
+      alert("Enter city Name");
+      return;
+    }
     try {
-      const response = await axios.request(options);
-      setWeatherData(response.data);
-      setError(null);
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${
+        import.meta.env.VITE_APP_ID
+      }`;
+
+      const response = await fetch(url);
+
+      const data = await response.json();
+
+      if(!response.ok){
+        alert(data.message);
+        return;
+      }
+
+      // console.log(data);
+
+      setWeatherData({
+        humidity: data.main.humidity,
+        windSpeed: data.wind.speed,
+        temperature: Math.floor(data.main.temp),
+        location: data.name,
+        icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+      });
     } catch (error) {
-      setError(error);
-      console.error(error);
+      setWeatherData(false);
+
     }
   };
 
-  const handleInputChange = (event) => {
-    setLocation(event.target.value);
-  };
-
-  const handleButtonClick = () => {
-    fetchWeatherData();
-  };
+  useEffect(() => {
+    search();
+  }, []);
 
   return (
-    <div className='container mx-auto card p-5 bg-orange-300 rounded-2xl w-fit text-center'>
-      <p className='mb-3'>Please enter your location below</p>
-      <input className='p-2 rounded-md'
+    <div
+      className="container mx-auto card p-5 bg-orange-300 rounded-2xl w-80
+     text-center"
+    >
+      <input
+        className="p-2 rounded-md"
         type="text"
-        value={location}
-        onChange={handleInputChange}
         placeholder="Enter location"
+        ref={inputref}
       />
-      <button className='bg-blue-400 rounded-md p-2 my-3 block w-full' onClick={handleButtonClick}>Get Weather</button>
+      <button
+        className="bg-blue-400 rounded-md p-2 my-3 block w-full"
+        onClick={() => search(inputref.current.value)}
+      >
+        Get Weather
+      </button>
+      {weatherdata ? (
+        <>
+          {" "}
+          <div>
+            <img
+              src={weatherdata.icon}
+              alt="weather_icon"
+              className="block m-auto"
+            />
+            <h1 className="text-5xl">{weatherdata.temperature}°C</h1>
 
-      {error && <p>Error: {error.message}</p>}
-      {weatherData ? (
-        <div >
-          <p>Location: {weatherData.location.name}</p>
-          <p>Temperature: {weatherData.current.temp_c}°C</p>
-          <p>Condition: {weatherData.current.condition.text}</p>
-        </div>
+            <h3 className="text-3xl">{weatherdata.location}</h3>
+          </div>
+        </>
       ) : (
-        <p className='mt-5'>Enter a location and click 'Get Weather' to see the current weather.</p>
+        <></>
       )}
     </div>
   );
