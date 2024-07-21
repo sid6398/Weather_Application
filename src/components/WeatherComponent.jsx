@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
 
 const WeatherComponent = () => {
   const [weatherdata, setWeatherData] = useState(false);
@@ -56,7 +55,7 @@ const WeatherComponent = () => {
         ref={inputref}
       />
       <button
-        className="bg-blue-400 rounded-md p-2 my-3 block w-full"
+        className="bg-blue-400 text-white rounded-md p-2 my-3 block w-full"
         onClick={() => search(inputref.current.value)}
       >
         Get Weather
